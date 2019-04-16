@@ -1,0 +1,25 @@
+- hosts: zookeeper
+  remote_user: root
+  roles:
+  - zookeeper
+  tasks:
+    - name: jps tool install
+      yum: name={{item}} state=present
+      with_items: 
+        - java-1.8.0-openjdk-devel.x86_64
+        - tree
+    - name: mkdir directory for bigdata data
+      file: dest={{BigdataDir}} mode=0755 state=directory
+    - name: install zookeeper
+      unarchive: src={{AnsibleDir}}/zookeeper/files/{{zookeeper_file_name}}.tar.gz dest={{BigdataDir}}
+    - name: install configuration file for zookeeper
+      template: src={{AnsibleDir}}/zookeeper/templates/zoo.cfg.j2 dest={{BigdataDir}}/{{zookeeper_file_name}}/conf/zoo.cfg
+    - name: create log\data  directory
+      file: dest={{BigdataDir}}/zookeeper/dataLogDir mode=0755 state=directory
+      file: dest={{BigdataDir}}/zookeeper/data  mode=0755 state=directory
+    - name: add myid file
+      shell: echo {{ myid }} > {{BigdataDir}}/zookeeper/data/myid
+    - name: start zookeeper
+      shell:  sh {{BigdataDir}}/{{zookeeper_file_name}}/bin/zkServer.sh start
+      tags:
+      - start zookeeper
