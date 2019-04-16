@@ -1,0 +1,9 @@
+- hosts: zookeeper
+  remote_user: root
+  roles:
+  - zookeeper
+  tasks:
+    - name: stop zookeeper
+      shell:  sh {{BigdataDir}}/{{zookeeper_file_name}}/bin/zkServer.sh stop
+      tags:
+      - start zookeeper
