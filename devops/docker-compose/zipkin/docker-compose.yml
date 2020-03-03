@@ -1,9 +1,0 @@
-version: "3"
-services:
-  zipkin:
-    image: openzipkin/zipkin
-    restart: always
-    network_mode: "host"
-    environment:
-      - STORAGE_TYPE=elasticsearch
-      - ES_HOSTS=${ES_HOSTS}
