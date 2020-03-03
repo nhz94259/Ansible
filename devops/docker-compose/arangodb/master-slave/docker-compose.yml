@@ -1,0 +1,31 @@
+version: '3'
+services:
+  master:
+    image: "arangodb/arangodb:3.4.0"
+    restart: always
+    network_mode: "host"
+    environment:
+      - ARANGO_ROOT_PASSWORD=Cisco123
+    volumes:
+      - ${ARANGODB_VOLUME}/master:/var/lib/arangodb3
+      - ../.init.sh:/.init.sh
+
+  slave1:
+    image: "arangodb/arangodb:3.4.0"
+    restart: always
+    network_mode: "host"
+    environment:
+      - ARANGO_ROOT_PASSWORD=Cisco123
+    volumes:
+      - ${ARANGODB_VOLUME}/slave1:/var/lib/arangodb3
+      - ../.init.sh:/.init.sh
+
+  slave2:
+    image: "arangodb/arangodb:3.4.0"
+    restart: always
+    network_mode: "host"
+    environment:
+      - ARANGO_ROOT_PASSWORD=Cisco123
+    volumes:
+      - ${ARANGODB_VOLUME}/slave2:/var/lib/arangodb3
+      - ../.init.sh:/.init.sh

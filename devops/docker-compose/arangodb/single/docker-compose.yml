@@ -1,0 +1,13 @@
+version: '3'
+services:
+  single:
+    image: "arangodb/arangodb:3.4.0"
+    restart: always
+    network_mode: "host"
+#    ports:
+#      - "8529:8529"
+    environment:
+      - ARANGO_ROOT_PASSWORD=Cisco123
+    volumes:
+      - ${ARANGODB_VOLUME}/single:/var/lib/arangodb3
+      - ../.init.sh:/.init.sh

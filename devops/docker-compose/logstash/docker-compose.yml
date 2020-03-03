@@ -1,0 +1,15 @@
+version: '3'
+services:
+  syslog_snmptrap:
+    image: docker.elastic.co/logstash/logstash:6.5.1
+#    ports:
+#      - 5140:5140
+#      - 1062:1062
+    environment:
+      XPACK_MONITORING_ENABLED: "false"
+    network_mode: "host"
+    logging:
+      options:
+        max-size: 10m
+    volumes:
+      - ./pipeline/:/usr/share/logstash/pipeline/

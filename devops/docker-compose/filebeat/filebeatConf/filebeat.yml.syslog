@@ -1,0 +1,31 @@
+######################  docker log文件监控 ##########################
+
+#=========================== Filebeat inputs =============================
+
+filebeat.inputs:
+
+- type: log
+
+  enabled: true
+
+  paths:
+    - /var/log/syslog.log
+
+
+  ### Multiline options
+
+  ###multiline.pattern: '^\d{4}-\d{2}-\d{2}'
+  ###multiline.negate: true
+  ###multiline.match: after
+
+
+#================================ Outputs =====================================
+
+
+#----------------------------- Logstash output --------------------------------
+output.kafka:
+  # The Logstash hosts
+  hosts: ["host1:9092", "host2:9092"]
+  codec.format:
+    string: '%{[message]}'
+  topic: 'FaultSyslog'

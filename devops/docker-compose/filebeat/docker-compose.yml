@@ -1,0 +1,11 @@
+version: '3'
+services:
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:6.5.1
+    restart: always
+    user: root
+    network_mode: "host"
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml

@@ -1,0 +1,6 @@
+version: "3"
+services:
+  redis:
+    image: "redis:4"
+    restart: always
+    network_mode: "host"

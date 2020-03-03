@@ -1,0 +1,23 @@
+version: '3'
+services:
+  mysql:
+    image: "mysql:5.7"
+    restart: always
+    network_mode: "host"
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ${MYSQL_VOLUME}:/var/lib/mysql
+  sonarqube:
+    image: "sonarqube:7.1"
+    restart: always
+    network_mode: "host"
+    environment:
+      - SONARQUBE_JDBC_USERNAME=${MYSQL_USER}
+      - SONARQUBE_JDBC_PASSWORD=${MYSQL_PASSWORD}
+      - SONARQUBE_JDBC_URL=jdbc:mysql://127.0.0.1:3306/${MYSQL_DATABASE}?useUnicode=true&characterEncoding=utf8&useSSL=false
+    depends_on:
+      - mysql

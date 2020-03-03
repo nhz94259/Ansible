@@ -1,6 +1,0 @@
-zk1: 192.168.193.57 
-zk2: 192.168.193.58
-zk3: 192.168.193.59 
-BigdataDir: /opt/hzgc
-AnsibleDir: /etc/ansible/roles
-zookeeper_file_name: zookeeper-3.4.5
