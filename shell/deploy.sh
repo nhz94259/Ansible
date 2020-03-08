@@ -11,7 +11,7 @@ branch_name=$4
 # 构建环境 dev or prod
 env=$5
 # 是否上传
-harbor=$6
+upload_image=$6
 # 镜像仓库地址
 registry=registry.eccom.com.cn/eccom/
 
@@ -65,7 +65,7 @@ if [ $? -eq 0 ]; then
     echo [info] images:tag=$image_name
     echo ""
 
-    if [[ $harbor==yes ]]||[[ $harbor==YES ]];then
+    if [[ $upload_image==yes ]]||[[ $upload_image==YES ]];then
         echo ""
         echo [info] push image to harbor name : image_name
         echo ""
