@@ -1,25 +1,29 @@
 #!/bin/bash
 
-export PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
-
 date=`date +%Y.%m.%d.%H.%M.%S`
 registry=registry.eccom.com.cn/eccom/
 service_version=rc-$date
 shell_dir=${WORKSPACE}
 code_dir=${WORKSPACE}/${service_name}
 image_name=${registry}${service_name}:${service_version}
-echo $JAVA_HOME
+
+
+
+if [[ ! -f "docker-compos.yml" ]];then
+	echo ""
+	echo [info] docker-compose down
+	echo ""
+	docker-compose down
+fi
 
 echo ""
-echo [info] create docker-compose.yml
+echo [info] update docker-compose.yml
 echo ""
-
-
 
 cat <<EOF> docker-compose.yml
 version: '2.4'
 services:
-  ccb-service:
+  ${service_name}:
     image: "${image_name}"
     restart: always
     network_mode: "host"
@@ -29,7 +33,6 @@ services:
     cpus: 1
     mem_limit: 2g
 EOF
-
 
 echo ${code_dir}
 
@@ -50,21 +53,17 @@ else
     echo "git pulling"
     git pull    
 fi
-
 echo ""
 echo [info] docker build ${service_name} image.
 echo ""
-
 if [[ ! -f "Dockerfile" ]];then
     echo "Dockerfile can not find!"
     exit 1
 fi
-
 if [[ ! -f "pom.xml" ]];then
     echo "pom.xml can not find !"
     exit 1
 fi
-
 mvn clean package -Dmaven.test.skip=true -U
 docker build --build-arg name=${service_name}-${env} -t ${image_name} .
 	
