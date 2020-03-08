@@ -1,0 +1,94 @@
+#!/bin/bash
+
+export PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
+
+date=`date +%Y.%m.%d.%H.%M.%S`
+registry=registry.eccom.com.cn/eccom/
+service_version=rc-$date
+shell_dir=${WORKSPACE}
+code_dir=${WORKSPACE}/${service_name}
+image_name=${registry}${service_name}:${service_version}
+echo $JAVA_HOME
+
+echo ""
+echo [info] create docker-compose.yml
+echo ""
+
+
+
+cat <<EOF> docker-compose.yml
+version: '2.4'
+services:
+  ccb-service:
+    image: "${image_name}"
+    restart: always
+    network_mode: "host"
+    environment:
+      - profile=ccb
+      - eureka-server=http://172.30.253.141:8080/eureka,http://172.30.253.142:8080/eureka
+    cpus: 1
+    mem_limit: 2g
+EOF
+
+
+echo ${code_dir}
+
+if [ ! -d ${code_dir}  ];then
+    echo ""
+    echo [info] create ${service_name} code
+    echo ""
+    git clone ${repo_url} 
+    cd  ${service_name}
+    git checkout ${branch_name}   
+else
+    echo ""
+    echo [info] update ${service_name} code
+    echo ""
+    cd  ${service_name}
+    echo "current code branch is :"${branch_name}
+    git checkout ${branch_name}
+    echo "git pulling"
+    git pull    
+fi
+
+echo ""
+echo [info] docker build ${service_name} image.
+echo ""
+
+if [[ ! -f "Dockerfile" ]];then
+    echo "Dockerfile can not find!"
+    exit 1
+fi
+
+if [[ ! -f "pom.xml" ]];then
+    echo "pom.xml can not find !"
+    exit 1
+fi
+
+mvn clean package -Dmaven.test.skip=true -U
+docker build --build-arg name=${service_name}-${env} -t ${image_name} .
+	
+if [ $? -eq 0 ]; then
+    cd ${shell_dir}
+    echo ""
+    echo [info] create  ${service_name} container.
+    echo ""
+    docker-compose up -d
+    
+    echo ""
+    echo [info] images:tag=${image_name}
+    echo ""
+    
+    if [[ ${upload_image} == "yes" ]]||[[ ${upload_image} == "release" ]];then
+    	echo ""
+    	echo [info] push image to harbor name : image_name
+    	echo ""
+    	git push ${image_name}   
+    fi
+    
+    exit 0
+else
+  	echo ""
+  	echo [error] build image faild. 
+	  echo ""
+fi
