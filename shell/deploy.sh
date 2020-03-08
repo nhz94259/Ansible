@@ -12,7 +12,9 @@ branch_name=$4
 env=$5
 # 是否上传
 harbor=$6
+# 镜像仓库地址
 registry=registry.eccom.com.cn/eccom/
+
 service_version=rc-$date
 shell_dir=`pwd`
 code_dir=/opt/cloudnet/$service_dir/code/$service_name
