@@ -88,7 +88,8 @@ if [ $? -eq 0 ]; then
     
     exit 0
 else
-  	echo ""
-  	echo [error] build image faild. 
-	  echo ""
+    echo ""
+    echo [error] build image faild. 
+    echo ""
+    exit 7
 fi
