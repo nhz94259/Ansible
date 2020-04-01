@@ -1,0 +1,65 @@
+pipeline {
+    
+    agent none
+    
+    parameters {
+        
+        string(name: 'service_name', defaultValue: 'ccb-service', description: '填写服务名称 「 pom中的 artifactId 」')
+
+        string(name: 'tag', defaultValue: 'dev', description: '版本')
+
+        string(name: 'eureka', defaultValue: 'http://172.20.18.90:8080/eureka,http://172.20.18.92:8080/eureka', description: 'eureka注册地址')
+
+ 
+   }
+
+    stages {
+        
+        stage('source build') {
+            agent {
+                node{
+                    label "master"
+                }
+            }
+            tools {
+                maven 'maven' 
+            }
+    
+            steps {
+                git branch: 'master', credentialsId: 'GitHubAccess', url: 'http://gitlab.eccom.com.cn:8929/neteagle_c/ccb4.0/ccb-service.git'
+                sh 'mvn clean package -DskipTests docker:build   docker:push'
+            }
+            
+        }
+
+        
+        stage('deploy'){
+            agent {
+                node{
+                    label "node-16"
+                    customWorkspace '/opt/cloudnet/ccb-service'
+                }
+            }
+            steps {
+sh '''
+cat <<EOF> docker-compose.yml
+version: '3.0'
+services:
+  ${service_name}:
+    image: "registry.eccom.com.cn/eccom/${service_name}:${tag}"
+    restart: always
+    network_mode: "host"
+    environment:
+      - profile=ccb
+      - eureka-server= ${eureka}
+    cpus: 1
+    mem_limit: 2g
+EOF
+'''
+                sh 'docker-compose down'
+                sh 'docker-compose up -d'
+                sh 'docker logs -f --tail 100 ${service_name}_${service_name}_1'
+            }
+        }
+    }
+}
