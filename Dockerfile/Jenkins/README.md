@@ -8,8 +8,8 @@ jenkins_opt目录结构
     - npm-packages-offline-cache
   
   
- cache global是node缓存目录，npm-packages-offline-cache是离线包 （  [参考](https://www.cnblogs.com/nhz-M/p/12421403.html)  ）
- jenkins 使用的maven环境配置 ( /opt/maven/mvn-repo 是容器内地址  )
+ - cache global是node缓存目录，npm-packages-offline-cache是离线包 （  [参考](https://www.cnblogs.com/nhz-M/p/12421403.html)  ）
+ - jenkins 使用的maven环境配置 ( /opt/maven/mvn-repo 是容器内地址  )
  
  ```
  <?xml version="1.0" encoding="UTF-8"?>
