@@ -26,13 +26,9 @@ jenkins_opt目录结构
             <mirrorOf>central</mirrorOf>
         </mirror>
     </mirrors>
-<!--
-    确定执行构建时，maven是否脱机
--->
+<!--确定执行构建时，maven是否脱机-->
     <offline>true</offline>
- <!--
-     配置网络代理
- -->
+ <!--配置网络代理-->
     <proxies>
     <!-- proxy Specification for one proxy, to be used in connecting to the network.
         <proxy>
