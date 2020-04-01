@@ -1,13 +1,13 @@
 jenkins_opt目录结构
 
-├── maven
-│   └── mvn-repo
-└── nodejs
-    ├── cache
-    ├── global
-    └── npm-packages-offline-cache
+maven
+    mvn-repo
+nodejs
+    cache
+    global
+    npm-packages-offline-cache
     
- jenkins 使用的maven环境配置
+ jenkins 使用的maven环境配置 ( /opt/maven/mvn-repo 是容器内地址  )
  
  ```
  <?xml version="1.0" encoding="UTF-8"?>
