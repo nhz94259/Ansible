@@ -1,0 +1,15 @@
+version: '2.4'
+services:
+  app:
+    image: "nhzcode/jenkins:1.0.25"
+    restart: always
+    privileged: true
+    ports:
+     - "8080:8080"
+    volumes:
+     - "/home/jenkins_root/jenkins_home:/var/jenkins_home"
+     - "/home/jenkins_root/jenkins_opt:/opt"
+     - "/var/run/docker.sock:/var/run/docker.sock"
+    network_mode: "host"
+    cpus: 1
+    mem_limit: 4g
