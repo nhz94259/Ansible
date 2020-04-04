@@ -5,7 +5,7 @@
 
 - jenkins_root.tar.gz  jenkins-custom.tar docker-compose.yml  拷贝到目标环境/home目录下
 - 解压Jenkins挂载目录
-    - tar -zxvf jenkins_root.tar.gz  [下载地址](链接:https://pan.baidu.com/s/1c2K-H3kyJQvgi5EqrzjKBA  密码:2vmj) 
+    - tar -zxvf jenkins_root.tar.gz  [下载地址](https://pan.baidu.com/s/1c2K-H3kyJQvgi5EqrzjKBA  密码:2vmj) 
 - 载入docker镜像
     - docker pull nhzdevops/jenkins:1.0.25
 - 启动镜像
