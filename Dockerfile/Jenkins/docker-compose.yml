@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   app:
-    image: "nhzcode/jenkins:1.0.25"
+    image: "nhzdevops/jenkins:1.0.25"
     restart: always
     privileged: true
     ports:
