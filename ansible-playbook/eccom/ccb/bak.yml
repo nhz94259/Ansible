@@ -1,0 +1,166 @@
+---
+- hosts: all
+  gather_facts: false
+  vars:
+    taskTime: "{{lookup('pipe','date +%s000')}}"
+    dest_dir: "/root/confbackup/{{host.ip}}"
+    file_name: "{{dest_dir}}/{{id}}.xml"
+    tempfilename: "{{host.ip}}.{{id}}.tmp"
+    serviceFilename: "{{host.ip}}.{{id}}.tmpservice"
+    ruleFilename: "{{host.ip}}.{{id}}.tmprule"
+    networkFilename: "{{host.ip}}.{{id}}.tmpnetwork"
+    addressGroupFilename: "{{host.ip}}.{{id}}.tmpaddressgroup"
+    tempfilepath: "/tmp/{{tempfilename}}"
+    tempservicefilepath: "/tmp/{{serviceFilename}}"
+    tempnetworkfilepath: "/tmp/{{networkFilename}}"
+    tempaddressgroupfilepath: "/tmp/{{addressGroupFilename}}"
+    temprulefilepath: "/tmp/{{ruleFilename}}"
+  tasks:
+    - name: save host apikey
+      uri:
+        url: "https://{{host.ip}}/api/?type=keygen&user={{host.api_username}}&password={{host.api_password}}"
+        method: GET
+        user: "{{host.api_username}}"
+        password: "{{host.api_password}}"
+        force_basic_auth: yes
+        validate_certs: no
+        return_content: yes
+        timeout: "{{timeout|default(10)}}"
+      delegate_to: localhost
+      register: keyresult
+    - name: test
+      debug:
+        msg: "{{keyresult.content|getKey}}"
+    - name: save network
+      uri:
+        url: "https://{{host.ip}}/api/?type=config&action=get&xpath=/config/panorama/vsys/entry[@name='vsys1']/address&key={{keyresult.content|getKey}}"
+        method: GET
+        user: "{{host.api_username}}"
+        password: "{{host.api_password}}"
+        dest: "{{tempnetworkfilepath}}"
+        force_basic_auth: yes
+        validate_certs: no
+        return_content: yes
+        timeout: "{{timeout|default(10)}}"
+      delegate_to: localhost
+      register: address_result
+    - name: save security rules
+      uri:
+        url: "https://{{host.ip}}/api/?type=config&action=get&xpath=/config/panorama/vsys/entry[@name='vsys1']/pre-rulebase/security&key={{keyresult.content|getKey}}"
+        method: GET
+        user: "{{host.api_username}}"
+        password: "{{host.api_password}}"
+        dest: "{{temprulefilepath}}"
+        force_basic_auth: yes
+        validate_certs: no
+        return_content: yes
+        timeout: "{{timeout|default(10)}}"
+      delegate_to: localhost
+      register: rule_result   
+    - name: save address group
+      uri:
+        url: "https://{{host.ip}}/api/?type=config&action=get&xpath=/config/panorama/vsys/entry[@name='vsys1']/address-group&key={{keyresult.content|getKey}}"
+        method: GET
+        user: "{{host.api_username}}"
+        password: "{{host.api_password}}"
+        dest: "{{tempaddressgroupfilepath}}"
+        force_basic_auth: yes
+        validate_certs: no
+        return_content: yes
+        timeout: "{{timeout|default(10)}}"
+      delegate_to: localhost
+      register: addressGroup_result   
+    - name: save service object
+      uri:
+        url: "https://{{host.ip}}/api/?type=config&action=get&xpath=/config/panorama/vsys/entry[@name='vsys1']/service&key={{keyresult.content|getKey}}"
+        method: GET
+        user: "{{host.api_username}}"
+        password: "{{host.api_password}}"
+        dest: "{{tempservicefilepath}}"
+        force_basic_auth: yes
+        validate_certs: no
+        return_content: yes
+        timeout: "{{timeout|default(10)}}"
+      delegate_to: localhost
+      register: service_result  
+    - name: save total config
+      uri:
+        url: "https://{{host.ip}}/api/?type=export&category=configuration"
+        method: GET
+        user: "{{host.api_username}}"
+        password: "{{host.api_password}}"
+        force_basic_auth: yes
+        validate_certs: no
+        dest: "{{tempfilepath}}"
+        return_content: yes
+        timeout: "{{timeout|default(10)}}"
+      delegate_to: localhost
+      register: result1
+    - name: upload total config file
+      vars:
+        ansible_connection: local
+      shell: |
+        echo `curl 'http://localhost:{{runServerPort}}/uri'  -H 'Content-Type: application/json'  --data '{ "method": "POST",  "body": {   "path": "{{tempfilepath}}",   "fileExtName": "xml"  },  "url": "adapter-ansible//fdfs"}' --compressed --insecure`
+        exit 0
+      register: result2  
+    - name: upload service config file
+      vars:
+        ansible_connection: local
+      shell: |
+        echo `curl 'http://localhost:{{runServerPort}}/uri'  -H 'Content-Type: application/json'  --data '{ "method": "POST",  "body": {   "path": "{{tempservicefilepath}}",   "fileExtName": "xml"  },  "url": "adapter-ansible//fdfs"}' --compressed --insecure`
+        exit 0
+      register: service_config_result
+    - name: upload network config file
+      vars:
+        ansible_connection: local
+      shell: |
+        echo `curl 'http://localhost:{{runServerPort}}/uri'  -H 'Content-Type: application/json'  --data '{ "method": "POST",  "body": {   "path": "{{tempnetworkfilepath}}",   "fileExtName": "xml"  },  "url": "adapter-ansible//fdfs"}' --compressed --insecure`
+        exit 0
+      register: network_config_result 
+    - name: upload address group config file
+      vars:
+        ansible_connection: local
+      shell: |
+        echo `curl 'http://localhost:{{runServerPort}}/uri'  -H 'Content-Type: application/json'  --data '{ "method": "POST",  "body": {   "path": "{{tempaddressgroupfilepath}}",   "fileExtName": "xml"  },  "url": "adapter-ansible//fdfs"}' --compressed --insecure`
+        exit 0
+      register: addressGroup_config_result
+    - name: upload pre security rules config file
+      vars:
+        ansible_connection: local
+      shell: |
+        echo `curl 'http://localhost:{{runServerPort}}/uri'  -H 'Content-Type: application/json'  --data '{ "method": "POST",  "body": {   "path": "{{temprulefilepath}}",   "fileExtName": "xml"  },  "url": "adapter-ansible//fdfs"}' --compressed --insecure`
+        exit 0
+      register: rule_config_result  
+    - name: save and parse confsave 
+      vars:
+        ansible_connection: local
+      uri:
+        url: "http://localhost:{{runServerPort}}/uri"
+        method: POST
+        body_format: json
+        return_content: yes
+        body:
+          url: business-firewall/firewall/conf
+          method: POST
+          body:
+            cmd: show run
+            deviceId: "{{ host.id }}"
+            ip: "{{ host.ip }}"
+            deviceType: "{{host.deviceType}}"
+            backupTime: "{{taskTime}}"
+            uploadFilePath: "group1/{{result2.stdout | json_getRes }}"
+            serviceUploadFilePath: "group1/{{service_config_result.stdout | json_getRes }}"
+            networkUploadFilePath: "group1/{{network_config_result.stdout | json_getRes }}"
+            securityRuleUploadFilePath: "group1/{{rule_config_result.stdout | json_getRes }}"
+            addressGroupUploadFilePath: "group1/{{addressGroup_config_result.stdout | json_getRes }}"
+            fileName: "{{result2.stdout | json_getRes }}"
+            method: "{{ backup_method }}"
+            operator: "{{ operator|default('') }}"
+            reason: "{{ (result1 is failed|ternary(result1.msg,result2 is failed|ternary(result2.stderr,'')))}}"
+            status: "{{ (result1 is succeeded and result2 is succeeded) | ternary(0,1) }}"
+            status_code: 200
+      delegate_to: localhost
+      ignore_errors: True
+      register: this
+      failed_when: "'\"code\":0' not in this.content or result1 is failed or result2 is failed"
+    
