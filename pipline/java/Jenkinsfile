@@ -57,6 +57,8 @@ services:
 EOF
 '''
                 sh 'docker-compose down'
+                sh 'docker rmi registry.eccom.com.cn/eccom/ccb-service:dev'
+                sh 'ls |grep -v docker-compose.yml  |xargs rm -rf'
                 sh 'docker-compose up -d'
                 sh 'docker logs -f --tail 100 ${service_name}_${service_name}_1'
             }
