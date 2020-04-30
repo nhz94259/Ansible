@@ -1,0 +1,33 @@
+pipeline {
+    
+    agent none
+    
+    
+    stages {
+        
+        stage('source build') {
+            agent {
+                node{
+                    label "master"
+                }
+            }
+            tools {
+                maven 'maven' 
+            }
+    
+            steps {
+                git branch: 'master', credentialsId: 'GitHubAccess', url: 'http://gitlab.eccom.com.cn:8929/neteagle_c/ccb4.0/ccb-service-cus.git'
+                sh 'mvn clean package -DskipTests'
+                sh 'scp ./target/ccb-service-1.0.0.jar root@172.20.18.92:/opt/custom/ccb-custom-service'
+                sh 'scp ./bin/startup.sh root@172.20.18.92:/opt/custom/ccb-custom-service'
+                sh "ssh root@172.20.18.92 'sh /opt/custom/ccb-custom-service/startup.sh stop'"
+                sh "ssh root@172.20.18.92 'sh /opt/custom/ccb-custom-service/startup.sh start'"
+                sh "ssh root@172.20.18.92 'tail -n 100  /opt/custom/ccb-custom-service/logs/ccb-service-1.0.0.jar.log'"
+                sh "ssh root@172.20.18.92 'ls /opt/custom/ccb-custom-service/ |grep startup.sh |xargs rm -rf'"
+            }
+            
+        }
+
+
+    }
+}
