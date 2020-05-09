@@ -32,7 +32,15 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 <!--本地缓存目录,注: /opt/maven/mvn-repo 是容器内目录-->
-    <localRepository>/opt/maven/mvn-repo</localRepository>  
+    <localRepository>/opt/maven/mvn-repo</localRepository> 
+     <mirrors>
+        <mirror>
+            <id>central</id>
+            <name>central</name>
+            <url>file:/opt/maven/mvn-repo</url>
+            <mirrorOf>*</mirrorOf>
+        </mirror>
+    </mirrors>
 <!--确定执行构建时，maven是否脱机-->
     <offline>true</offline>
 </settings>
