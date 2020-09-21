@@ -1,7 +1,7 @@
 #!/bin/bash
 
 date=`date +%Y.%m.%d.%H.%M.%S`
-registry=registry.eccom.com.cn/eccom/
+registry=registry.ant.com.cn/ant/
 service_version=rc-$date
 shell_dir=${WORKSPACE}
 code_dir=${WORKSPACE}/${service_name}
