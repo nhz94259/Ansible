@@ -4,7 +4,7 @@ pipeline {
     
     parameters {
         
-        string(name: 'service_name', defaultValue: 'ccb-web', description: '填写服务名称 「 pom中的 artifactId 」')
+        string(name: 'service_name', defaultValue: 'web', description: '填写服务名称 「 pom中的 artifactId 」')
 
         string(name: 'tag', defaultValue: 'dev', description: '版本')
         
@@ -22,13 +22,13 @@ pipeline {
             }
              
             steps {
-                git branch: 'master', credentialsId: 'GitHubAccess', url: 'http://gitlab.eccom.com.cn:8929/neteagle_c/ccb4.0/ccb-web.git'
+                git branch: 'master', credentialsId: 'GitHubAccess', url: 'git'
                 sh 'yarn config set yarn-offline-mirror /opt/nodejs/npm-packages-offline-cache && yarn config set yarn-offline-mirror-pruning true'
                 sh 'cp /usr/local/share/.yarnrc ./'
                 sh 'yarn install -offline'
                 sh 'yarn build'
-                sh 'docker build -t registry.eccom.com.cn/eccom/ccb-web:$tag .'
-                sh 'docker push registry.eccom.com.cn/eccom/ccb-web:$tag'
+                sh 'docker build -t registry.web:$tag .'
+                sh 'docker push registry.web:$tag'
             }
         }
 
@@ -36,7 +36,7 @@ pipeline {
             agent {
                 node{
                     label "node-16"
-                    customWorkspace '/opt/cloudnet/ccb-web'
+                    customWorkspace '/opt/****/web'
                 }
             }
             steps {
@@ -45,7 +45,7 @@ cat <<EOF> docker-compose.yml
 version: '3.0'
 services:
   ${service_name}:
-    image: "registry.eccom.com.cn/eccom/${service_name}:${tag}"
+    image: "registry****/${service_name}:${tag}"
     restart: always
     network_mode: "host"
     environment:
