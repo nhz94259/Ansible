@@ -5,7 +5,7 @@ registry=registry.ant.com.cn/ant/
 service_version=rc-$date
 shell_dir=${WORKSPACE}
 code_dir=${WORKSPACE}/${service_name}
-image_name=${registry}${service_name}:${service_version}
+image_name=${registcy}${service_name}:${service_version}
 
 
 
@@ -28,7 +28,7 @@ services:
     restart: always
     network_mode: "host"
     environment:
-      - profile=ccb
+      - profile=ccc
       - eureka-server=http://172.30.253.141:8080/eureka,http://172.30.253.142:8080/eureka
     cpus: 1
     mem_limit: 2g
