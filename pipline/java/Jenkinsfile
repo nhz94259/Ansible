@@ -4,7 +4,7 @@ pipeline {
     
     parameters {
         
-        string(name: 'service_name', defaultValue: 'ccb-service', description: '填写服务名称 「 pom中的 artifactId 」')
+        string(name: 'service_name', defaultValue: 'service', description: '填写服务名称 「 pom中的 artifactId 」')
 
         string(name: 'tag', defaultValue: 'dev', description: '版本')
 
@@ -26,7 +26,7 @@ pipeline {
             }
     
             steps {
-                git branch: 'master', credentialsId: 'GitHubAccess', url: 'http://gitlab.eccom.com.cn:8929/neteagle_c/ccb4.0/ccb-service.git'
+                git branch: 'master', credentialsId: 'GitHubAccess', url: 'git'
                 sh 'mvn clean package -DskipTests docker:build   docker:push'
             }
             
@@ -37,7 +37,7 @@ pipeline {
             agent {
                 node{
                     label "node-16"
-                    customWorkspace '/opt/cloudnet/ccb-service'
+                    customWorkspace '/opt/***/service'
                 }
             }
             steps {
@@ -46,7 +46,7 @@ cat <<EOF> docker-compose.yml
 version: '2.4'
 services:
   ${service_name}:
-    image: "registry.eccom.com.cn/eccom/${service_name}:${tag}"
+    image: "registry/${service_name}:${tag}"
     restart: always
     network_mode: "host"
     environment:
@@ -57,7 +57,7 @@ services:
 EOF
 '''
                 sh 'docker-compose down'
-                sh 'docker rmi registry.eccom.com.cn/eccom/ccb-service:dev'
+                sh 'docker rmi registry/service:dev'
                 sh 'ls |grep -v docker-compose.yml  |xargs rm -rf'
                 sh 'docker-compose up -d'
                 sh 'docker logs -f --tail 100 ${service_name}_${service_name}_1'
