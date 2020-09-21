@@ -24,7 +24,7 @@ if [ $? -eq 0 ]; then
      cd $work_dir
 cat << EOF > $work_dir$filename/aarangorestore.sh
 #!/bin/bash
-docker exec -it arangodb_app_1  sh -c 'arangorestore --server.endpoint tcp://localhost:8529 --server.username eccom --server.password eccom --server.database cmdb --input-directory /var/lib/arangodb3/$filename  --overwrite true'
+docker exec -it arangodb_app_1  sh -c 'arangorestore --server.endpoint tcp://localhost:8529 --server.username /****/ --server.password /****/ --server.database cmdb --input-directory /var/lib/arangodb3/$filename  --overwrite true'
 EOF
      tar -zcf $filename.tar $filename
      echo
