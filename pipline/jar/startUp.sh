@@ -2,7 +2,7 @@
 cd `dirname $0`
 CUR_SHELL_DIR=`pwd`
 CUR_SHELL_NAME=`basename ${BASH_SOURCE}`
-JAR_NAME="ccb-service-1.0.0.jar"
+JAR_NAME="service-1.0.0.jar"
 JAR_PATH=$CUR_SHELL_DIR/$JAR_NAME
 #JAVA_MEM_OPTS=" -server -Xms1024m -Xmx1024m -XX:PermSize=128m"
 JAVA_MEM_OPTS=""
