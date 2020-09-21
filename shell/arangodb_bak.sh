@@ -4,11 +4,11 @@ mkdir /data
 cd /data #set cronjob workspace
 
 date=`date +%Y-%m%d-%H%M%S`
-data_user=eccom
-data_password=eccom
+data_user=ant
+data_password=ant
 database_name=cmdb
 containerIdorName=arangodb_app_1
-arango_volunm_dir=/opt/cloudnet/arangodb/data/ #docker arango volumn dir
+arango_volunm_dir=/opt/****/arangodb/data/ #docker arango volumn dir
 cur_shell_dir=`pwd`
 work_dir=$cur_shell_dir'/cmdb_data_backup/'
 filename=$database_name'-dump-'$date
