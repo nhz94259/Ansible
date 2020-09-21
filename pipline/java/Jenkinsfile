@@ -50,7 +50,7 @@ services:
     restart: always
     network_mode: "host"
     environment:
-      - profile=ccb
+      - profile=ccc
       - eureka-server= ${eureka}
     cpus: 1
     mem_limit: 2g
