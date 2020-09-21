@@ -19,7 +19,7 @@ pipeline {
                 git branch: 'master', credentialsId: 'GitHubAccess', url: 'git'
                 sh 'mvn clean package -DskipTests'
                 sh 'scp ./target/service-1.0.0.jar root@172.20.18.92:/opt/custom/custom-service'
-                sh 'scp ./bin/startup.sh root@172.20.18.92:/opt/custom/ccb-custom-service'
+                sh 'scp ./bin/startup.sh root@172.20.18.92:/opt/custom/custom-service'
                 sh "ssh root@172.20.18.92 'sh /opt/custom/custom-service/startup.sh stop'"
                 sh "ssh root@172.20.18.92 'sh /opt/custom/custom-service/startup.sh start'"
                 sh "ssh root@172.20.18.92 'tail -n 100  /opt/custom/custom-service/logs/service-1.0.0.jar.log'"
