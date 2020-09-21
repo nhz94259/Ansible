@@ -13,7 +13,7 @@ env=$5
 # 是否上传
 upload_image=$6
 # 镜像仓库地址
-registry=registry.eccom.com.cn/eccom/
+registry=registry.ant.com.cn/ant/
 
 service_version=rc-$date
 shell_dir=`pwd`
@@ -30,7 +30,7 @@ if [ ! -d $code_dir  ];then
     echo ""
     echo [info] create $service_name code
     echo ""
-    mkdir -p  /opt/cloudnet/$service_dir/code/
+    mkdir -p  /opt/****/$service_dir/code/
     cd /opt/cloudnet/$service_dir/code/
     git clone $repo_url 
     cd ./$service_name
