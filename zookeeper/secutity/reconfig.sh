@@ -19,7 +19,7 @@ requireClientAuthScheme=sasl
 jaasLoginRenew=3600000
 EOF
 echo zoo.cfg
-cat $ZK_HOME/conf/zoo.cfg
+cat $ZK_HOME/conf/zoo.cfg  | grep -v ^# |grep -v ^$
 
 cat>$ZK_HOME/conf/zk_server_jaas.conf<<EOF
 Server {
@@ -35,7 +35,7 @@ cat $ZK_HOME/conf/zk_server_jaas.conf
 
 
 sed -i '2a\export SERVER_JVMFLAGS=" -Djava.security.auth.login.config=$ZK_HOME/conf/zk_server_jaas.conf "' $ZK_HOME/bin/zkEnv.sh
-cat $ZK_HOME/bin/zkEnv.sh
+cat $ZK_HOME/bin/zkEnv.sh  | grep -v ^# |grep -v ^$
 
 cat>$KAFKA_HOME/config/kafka_server_jaas.conf<<EOF
 KafkaServer {
@@ -60,6 +60,7 @@ KafkaClient {
 };
 EOF
 cat $KAFKA_HOME/config/kafka_server_jaas.conf
+
 cat>$KAFKA_HOME/config/client-sasl.properties<<EOF
 security.protocol=SASL_PLAINTEXT
 sasl.mechanism=PLAIN
@@ -72,5 +73,7 @@ sed -i "/listeners=SASL_PLAINTEXT/aauthorizer.class.name=kafka.security.auth.Sim
 sed -i "/listeners=SASL_PLAINTEXT/asasl.mechanism.inter.broker.protocol=PLAIN" $KAFKA_HOME/config/server.properties
 sed -i "/listeners=SASL_PLAINTEXT/asasl.enabled.mechanisms=PLAIN" $KAFKA_HOME/config/server.properties
 sed -i "/listeners=SASL_PLAINTEXT/asecurity.inter.broker.protocol=SASL_PLAINTEXT" $KAFKA_HOME/config/server.properties
+
+cat $KAFKA_HOME/config/server.properties | grep -v ^# |grep -v ^$
 
 
